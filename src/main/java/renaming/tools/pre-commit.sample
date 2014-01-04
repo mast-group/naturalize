@@ -1,0 +1,33 @@
+#!/bin/bash
+# pre-commit git hook to check naturalness
+#
+# Based on https://gist.github.com/fluxrad/2361452
+#
+# Install:
+#  /path/to/repo/.git/hooks/pre-commit
+
+# Set here the location of the precommit .jar
+NATURALIZE_LOCATION=/path/to/jar/naturalizecheck.jar
+
+# Set any parameters
+NATURALIZE_OPTIONS="-v"
+
+git stash -q --keep-index #Stash. See http://codeinthehole.com/writing/tips-for-using-a-git-pre-commit-hook/
+
+echo "### Checking naturalness ###"
+CHANGED_FILES=$(git diff --name-only --cached | grep -E '\.(java)')
+
+
+java -Xmx2G -jar $NATURALIZE_LOCATION precommit.jar -c $(pwd) $NATURALIZE_OPTIONS $CHANGED_FILES 2>/dev/null
+RESULT=$?
+
+git stash pop -q # Unstash
+
+if [[ $RESULT -ne 0 ]]
+then
+    echo "FATAL: Naturalness is bad. See suggestions above"
+    exit 1
+else
+    echo "Everything looks good from a naturalness point of view."
+fi
+
