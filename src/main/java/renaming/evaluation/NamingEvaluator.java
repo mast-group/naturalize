@@ -319,14 +319,6 @@ public class NamingEvaluator {
 	}
 
 	/**
-	 * @param tp
-	 * @param all
-	 * @param unk
-	 * @param prRecall
-	 * @param loss
-	 * @param positions
-	 * @param recipRanks
-	 * @param identifier
 	 */
 	public void evaluateSingleRenaming(final ResultObject[] results,
 			final Entry<Scope, String> identifier) {

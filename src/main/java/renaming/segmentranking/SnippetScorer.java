@@ -136,6 +136,16 @@ public class SnippetScorer {
 		return filteredRenamings;
 	}
 
+	/**
+	 * Compute the score of the suggested renamings for the current identifier
+	 * name. This functions computes the gap (g function) for the given renaming
+	 * and the current identifier naming.
+	 * 
+	 * @param suggestedRenamings
+	 * @param currentIdentifierName
+	 * @param useUNKs
+	 * @return
+	 */
 	public static double getScore(final SortedSet<Renaming> suggestedRenamings,
 			final String currentIdentifierName, final boolean useUNKs) {
 		final double firstScore = suggestedRenamings.first().score;

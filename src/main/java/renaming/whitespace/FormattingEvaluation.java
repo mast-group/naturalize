@@ -53,7 +53,8 @@ public class FormattingEvaluation {
 
 				FormattingRenamings fr = new FormattingRenamings();
 				fr.buildModel(trainFiles);
-				results.accumulate(fr.evaluateFormattingAccuracy(testedFile));
+				FormattingRenamingsEval eval = new FormattingRenamingsEval(fr);
+				results.accumulate(eval.evaluateFormattingAccuracy(testedFile));
 			} catch (IOException e) {
 				LOGGER.warning(ExceptionUtils.getFullStackTrace(e));
 			}
@@ -80,7 +81,7 @@ public class FormattingEvaluation {
 		fe.performEvaluation();
 	}
 
-	FormattingRenamings.WhitespacePrecisionRecall results = new FormattingRenamings.WhitespacePrecisionRecall();
+	FormattingRenamingsEval.WhitespacePrecisionRecall results = new FormattingRenamingsEval.WhitespacePrecisionRecall();
 
 	final Collection<File> allFiles;
 

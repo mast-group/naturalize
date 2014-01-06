@@ -49,7 +49,7 @@ public class FormattingPreCommit {
 			trainSet.remove(testFile);
 			fr.buildModel(trainSet);
 
-			for (final String token : fr.ngramLM.getTrie().getVocabulary()) {
+			for (final String token : fr.getNgramLM().getTrie().getVocabulary()) {
 				if (token.startsWith("WS_")) {
 					allWhitespaceChars.add(token);
 				}
