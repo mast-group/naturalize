@@ -26,7 +26,7 @@ import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.languagetools.ITokenizer;
-import codemining.languagetools.ParseKind;
+import codemining.languagetools.ParseType;
 import codemining.languagetools.Scope;
 
 import com.google.common.collect.Lists;
@@ -189,7 +189,7 @@ public class HumanEvaluationOutput {
 				System.out.println("============Renaming " + nextQuestionId
 						+ "==============");
 				final ScopedIdentifierRenaming sir = new ScopedIdentifierRenaming(
-						scopeExtractor, ParseKind.COMPILATION_UNIT);
+						scopeExtractor, ParseType.COMPILATION_UNIT);
 				final String renamed = sir.getFormattedRenamedCode(
 						selected.getKey().code, selected.getValue(),
 						"GUESS_IT", FileUtils.readFileToString(testFile));

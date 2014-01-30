@@ -32,7 +32,7 @@ import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.languagetools.ITokenizer;
-import codemining.languagetools.ParseKind;
+import codemining.languagetools.ParseType;
 import codemining.languagetools.Scope;
 import codemining.lm.ngram.AbstractNGramLM;
 import codemining.lm.ngram.NGramLM;
@@ -246,7 +246,7 @@ public class DynamicRangeEval {
 		final Multimap<Scope, String> scopes = scopeExtractor
 				.getFromNode(method);
 		final ScopedIdentifierRenaming identifierRenamer = new ScopedIdentifierRenaming(
-				scopeExtractor, ParseKind.METHOD);
+				scopeExtractor, ParseType.METHOD);
 		final List<String> renamedVars = Lists.newArrayList(scopes.values());
 		Collections.shuffle(renamedVars);
 
@@ -263,7 +263,7 @@ public class DynamicRangeEval {
 		final String renamedMethod = identifierRenamer.getRenamedCode(
 				method.toString(), method.toString(), renamingPlan);
 		final ASTNode renamedMethodNode = ex.getASTNode(renamedMethod,
-				ParseKind.METHOD);
+				ParseType.METHOD);
 
 		final SnippetSuggestions ssAfter = SnippetScorer.scoreSnippet(
 				renamedMethodNode, renamer, scopeExtractor, false, false);

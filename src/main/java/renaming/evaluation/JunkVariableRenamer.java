@@ -19,7 +19,7 @@ import codemining.java.codeutils.JavaASTExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.VariableScopeExtractor;
 import codemining.java.codeutils.scopes.VariableScopeExtractor.Variable;
-import codemining.languagetools.ParseKind;
+import codemining.languagetools.ParseType;
 import codemining.util.SettingsLoader;
 
 import com.google.common.collect.Lists;
@@ -123,7 +123,7 @@ public class JunkVariableRenamer {
 	public String renameSingleVariablesToJunk(final String file)
 			throws IOException {
 		final Multimap<ASTNode, Variable> vars = VariableScopeExtractor
-				.getVariableScopes(file, ParseKind.COMPILATION_UNIT);
+				.getVariableScopes(file, ParseType.COMPILATION_UNIT);
 		final List<Entry<ASTNode, Variable>> selected = Lists.newArrayList();
 		for (final Entry<ASTNode, Variable> entry : vars.entries()) {
 			if (!entry.getValue().name.matches("^junk[0-9]+$")) {
@@ -149,7 +149,7 @@ public class JunkVariableRenamer {
 		}
 		final ScopedIdentifierRenaming scr = new ScopedIdentifierRenaming(
 				new VariableScopeExtractor.VariableScopeSnippetExtractor(),
-				ParseKind.COMPILATION_UNIT);
+				ParseType.COMPILATION_UNIT);
 
 		final String renamed = scr.getRenamedCode(entry.getKey().toString(),
 				entry.getValue().name, "junk" + unusedName, file);

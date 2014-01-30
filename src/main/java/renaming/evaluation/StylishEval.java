@@ -36,7 +36,7 @@ import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.languagetools.ITokenizer;
-import codemining.languagetools.ParseKind;
+import codemining.languagetools.ParseType;
 import codemining.languagetools.Scope;
 import codemining.languagetools.TokenizerUtils;
 import codemining.util.parallel.ParallelThreadPool;
@@ -186,7 +186,7 @@ public class StylishEval {
 
 		final JavaASTExtractor ex = new JavaASTExtractor(false);
 		final ScopedIdentifierRenaming identifierRenamer = new ScopedIdentifierRenaming(
-				scopeExtractor, ParseKind.METHOD);
+				scopeExtractor, ParseType.METHOD);
 
 		final Multimap<Scope, String> scopes = scopeExtractor
 				.getFromNode(currentMethod);
@@ -210,7 +210,7 @@ public class StylishEval {
 					renamingPlan);
 			// and create an AST Node
 			currentMethod = (MethodDeclaration) ex.getASTNode(renamedMethod,
-					ParseKind.METHOD);
+					ParseType.METHOD);
 		}
 
 		final SnippetSuggestions ss = SnippetScorer.scoreSnippet(currentMethod,

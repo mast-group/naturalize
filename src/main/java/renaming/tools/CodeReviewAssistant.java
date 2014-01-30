@@ -51,7 +51,7 @@ public class CodeReviewAssistant {
 	 * @throws SerializationException
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws SerializationException,
+	public static void main(final String[] args) throws SerializationException,
 			IOException {
 
 		final CommandLineParser parser = new PosixParser();
@@ -88,7 +88,7 @@ public class CodeReviewAssistant {
 		final CommandLine parse;
 		try {
 			parse = parser.parse(options, args);
-		} catch (ParseException ex) {
+		} catch (final ParseException ex) {
 			System.err.println(ex.getMessage());
 			final HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("styleprofile FILE1, FILE2, ...", options);
@@ -143,7 +143,7 @@ public class CodeReviewAssistant {
 		for (final File f : testFiles) {
 			final String snippetCode = FileUtils.readFileToString(f);
 			final SnippetSuggestions suggestions = scorer.scoreSnippet(
-					ex.getASTNode(snippetCode), true);
+					ex.getAST(f), true);
 			if (!suggestions.suggestions.isEmpty()) {
 				noSuggestions = false;
 				System.out

@@ -24,7 +24,7 @@ import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.languagetools.ITokenizer;
-import codemining.languagetools.ParseKind;
+import codemining.languagetools.ParseType;
 import codemining.languagetools.Scope;
 import codemining.util.parallel.ParallelThreadPool;
 
@@ -160,7 +160,7 @@ public class PerturbationEvaluator {
 		this.scopeExtractor = scopeExtractor;
 		this.renamerClass = renamerClass;
 		varRenamer = new ScopedIdentifierRenaming(scopeExtractor,
-				ParseKind.COMPILATION_UNIT);
+				ParseType.COMPILATION_UNIT);
 	}
 
 	void evaluateFile(final File testFile, final Collection<File> trainFiles)

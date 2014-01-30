@@ -34,7 +34,7 @@ import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.languagetools.ITokenizer;
-import codemining.languagetools.ParseKind;
+import codemining.languagetools.ParseType;
 import codemining.languagetools.Scope;
 import codemining.util.parallel.ParallelThreadPool;
 
@@ -206,7 +206,7 @@ public class SelectionSuggestionEval {
 			final List<String> randomVars) throws IOException {
 		final JavaASTExtractor ex = new JavaASTExtractor(false);
 		final ScopedIdentifierRenaming identifierRenamer = new ScopedIdentifierRenaming(
-				scopeExtractor, ParseKind.METHOD);
+				scopeExtractor, ParseType.METHOD);
 		final double[] scoreAtPerturbationLevel = new double[EvaluationResults.PERCENTAGE_PERTURBATION.length];
 		final Multimap<Scope, String> scopes = scopeExtractor
 				.getFromNode(currentMethod);
@@ -234,7 +234,7 @@ public class SelectionSuggestionEval {
 					renamingPlan);
 			// and create an AST Node
 			final ASTNode renamedMethodNode = ex.getASTNode(renamedMethod,
-					ParseKind.METHOD);
+					ParseType.METHOD);
 
 			// get score
 			final SnippetSuggestions ss = SnippetScorer.scoreSnippet(
