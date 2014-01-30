@@ -56,12 +56,12 @@ public class CommonNameRenamingEvaluator {
 
 		/**
 		 * @param renamer
-		 * @param m
+		 * @param scopes
 		 */
 		private void evaluateJunkRenamings(
 				final AbstractIdentifierRenamings renamer,
-				final Multimap<Scope, String> m) {
-			for (final Entry<Scope, String> variable : m.entries()) {
+				final Multimap<Scope, String> scopes) {
+			for (final Entry<Scope, String> variable : scopes.entries()) {
 				try {
 					final SortedSet<Renaming> renamings = renamer.getRenamings(
 							variable.getKey(), variable.getValue());

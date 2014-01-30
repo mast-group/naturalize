@@ -58,11 +58,11 @@ public abstract class AbstractIdentifierRenamings implements
 	 */
 	@Override
 	public SortedSet<Renaming> calculateScores(
-			final Multiset<NGram<String>> ngrams, final Set<String> renamings,
+			final Multiset<NGram<String>> ngrams, final Set<String> alternatives,
 			final Scope scope) {
 		final SortedSet<Renaming> scoreMap = Sets.newTreeSet();
 
-		for (final String identifierName : renamings) {
+		for (final String identifierName : alternatives) {
 			double score = 0;
 			for (final Entry<NGram<String>> ngram : ngrams.entrySet()) {
 				try {

@@ -39,7 +39,10 @@ public class FormattingRenamings implements INGramIdentifierRenamer {
 	private static final Logger LOGGER = Logger
 			.getLogger(FormattingRenamings.class.getName());
 
-	final ITokenizer wsTokenizer = new JavaFormattingTokenizer();
+	/**
+	 * The formatting (whitespace) tokenizer.
+	 */
+	final ITokenizer tokenizer = new JavaFormattingTokenizer();
 
 	private AbstractNGramLM ngramLM;
 
@@ -69,7 +72,7 @@ public class FormattingRenamings implements INGramIdentifierRenamer {
 
 	public void buildModel(final Collection<File> trainingFiles) {
 		try {
-			final AbstractNGramLM dict = new NGramLM(NGRAM_SIZE, wsTokenizer);
+			final AbstractNGramLM dict = new NGramLM(NGRAM_SIZE, tokenizer);
 			dict.trainModel(trainingFiles);
 
 			final AbstractNGramLM ng = (AbstractNGramLM) checkNotNull(
@@ -161,11 +164,11 @@ public class FormattingRenamings implements INGramIdentifierRenamer {
 	}
 
 	/**
-	 * @param fileContent
+	 * @param code
 	 * @return
 	 */
-	public List<String> tokenizeCode(final char[] fileContent) {
-		final List<String> tokens = wsTokenizer.tokenListFromCode(fileContent);
+	public List<String> tokenizeCode(final char[] code) {
+		final List<String> tokens = tokenizer.tokenListFromCode(code);
 		return tokens;
 	}
 }

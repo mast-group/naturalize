@@ -191,8 +191,8 @@ public class PerturbationEvaluator {
 	public void performEvaluation() {
 		final ParallelThreadPool threadPool = new ParallelThreadPool();
 		int fileNo = 0;
-		for (final File fi : allFiles) {
-			threadPool.pushTask(new Evaluator(fi));
+		for (final File f : allFiles) {
+			threadPool.pushTask(new Evaluator(f));
 			fileNo++;
 			if (fileNo % 10 == 0) {
 				threadPool.pushTask(new Printer());

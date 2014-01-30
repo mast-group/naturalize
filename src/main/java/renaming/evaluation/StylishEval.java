@@ -87,9 +87,9 @@ public class StylishEval {
 				ScopesTUI.getScopeExtractorByName("variable"));
 
 		final int nExperiments = N_SNIPPETS;
-		final ParallelThreadPool pt = new ParallelThreadPool();
+		final ParallelThreadPool threadPool = new ParallelThreadPool();
 		for (int i = 0; i < nExperiments; i++) {
-			pt.pushTask(new Runnable() {
+			threadPool.pushTask(new Runnable() {
 
 				@Override
 				public void run() {
@@ -104,7 +104,7 @@ public class StylishEval {
 			});
 		}
 
-		pt.waitForTermination();
+		threadPool.waitForTermination();
 		for (final EvaluationResult result : sse.results) {
 			System.out.println(result);
 		}

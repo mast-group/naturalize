@@ -42,6 +42,10 @@ import com.google.common.collect.Sets;
  */
 public class SegmentRenamingSuggestion {
 
+	/**
+	 * Struct class for suggestions.
+	 * 
+	 */
 	public static class Suggestion implements Comparable<Suggestion> {
 
 		final double confidenceGap;
@@ -130,7 +134,7 @@ public class SegmentRenamingSuggestion {
 			.getLogger(SegmentRenamingSuggestion.class.getName());
 
 	public static SortedSet<Suggestion> getVariableSuggestions(
-			final File currentFile, final File projectDir, final boolean useUNK)
+			final File currentFile, final File directory, final boolean useUNK)
 			throws IOException {
 		final ITokenizer tokenizer = new JavaTokenizer();
 
@@ -138,7 +142,7 @@ public class SegmentRenamingSuggestion {
 				tokenizer);
 
 		final Collection<java.io.File> trainingFiles = FileUtils.listFiles(
-				projectDir, tokenizer.getFileFilter(),
+				directory, tokenizer.getFileFilter(),
 				DirectoryFileFilter.DIRECTORY);
 
 		trainingFiles.remove(currentFile);
@@ -257,7 +261,7 @@ public class SegmentRenamingSuggestion {
 						s.getKey(), s.getValue());
 				suggestions.add(addRenamingSuggestion(renamings, s.getValue(),
 						s.getKey()));
-			} catch (Throwable e) {
+			} catch (final Throwable e) {
 				LOGGER.warning("Failed to get suggestions for " + s
 						+ ExceptionUtils.getFullStackTrace(e));
 			}

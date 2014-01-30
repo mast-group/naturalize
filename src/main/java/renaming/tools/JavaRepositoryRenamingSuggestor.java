@@ -137,7 +137,9 @@ public class JavaRepositoryRenamingSuggestor {
 
 		// Print suggestions
 		for (final NamedSnippetSuggestions suggestion : allSuggestions) {
-			suggestion.print();
+			if (!suggestion.suggestions.isEmpty()) {
+				suggestion.print();
+			}
 		}
 
 	}

@@ -64,11 +64,11 @@ public class VariableTypePrior implements
 			return;
 		}
 
-		final Collection<File> files = FileUtils.listFiles(new File(args[0]),
+		final Collection<File> trainingFiles = FileUtils.listFiles(new File(args[0]),
 				new RegexFileFilter(".*\\.java$"),
 				DirectoryFileFilter.DIRECTORY);
 
-		final VariableTypePrior tp = VariableTypePrior.buildFromFiles(files);
+		final VariableTypePrior tp = VariableTypePrior.buildFromFiles(trainingFiles);
 		Serializer.getSerializer().serialize(tp, args[1]);
 	}
 
