@@ -32,9 +32,8 @@ public class FormattingRenamingsEval {
 	 * 
 	 */
 	public static class WhitespacePrecisionRecall {
-		static double[] THRESHOLD_VALUES = { -.1, -.2, -.5, -1, -1.5, -2, -2.5,
-				-3, -3.5, -4, -5, -6, -7, -8, -10, -12, -15, -20, -50, -100,
-				-Double.MAX_VALUE };
+		static double[] THRESHOLD_VALUES = { .1, .2, .5, 1, 1.5, 2, 2.5, 3,
+				3.5, 4, 5, 6, 7, 8, 10, 12, 15, 20, 50, 100, Double.MAX_VALUE };
 		final long[] nGaveSuggestions = new long[THRESHOLD_VALUES.length];
 		final long[] nCorrect = new long[THRESHOLD_VALUES.length];
 
@@ -69,7 +68,7 @@ public class FormattingRenamingsEval {
 			// Find the index after which we suggest things
 			int idx = THRESHOLD_VALUES.length - 1;
 			for (int i = 0; i < THRESHOLD_VALUES.length; i++) {
-				if (tp.score > THRESHOLD_VALUES[i]) {
+				if (tp.score < THRESHOLD_VALUES[i]) {
 					idx = i;
 					break;
 				}
@@ -123,8 +122,8 @@ public class FormattingRenamingsEval {
 						i, tokens);
 
 				// find all renamings
-				final Set<String> alternatives = Sets
-						.newTreeSet(renamer.getNgramLM().getTrie().getVocabulary());
+				final Set<String> alternatives = Sets.newTreeSet(renamer
+						.getNgramLM().getTrie().getVocabulary());
 				alternatives.add(AbstractNGramLM.UNK_SYMBOL);
 
 				// score accuracy of first suggestion
