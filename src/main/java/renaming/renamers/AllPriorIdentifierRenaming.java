@@ -29,10 +29,10 @@ public class AllPriorIdentifierRenaming extends BaseIdentifierRenamings {
 	private static final Logger LOGGER = Logger
 			.getLogger(AllPriorIdentifierRenaming.class.getName());
 
-	public static boolean USE_GRAMMAR = SettingsLoader.getBooleanSetting(
+	public static final boolean USE_GRAMMAR = SettingsLoader.getBooleanSetting(
 			"useGrammar", true);
 
-	public static boolean USE_TYPES = SettingsLoader.getBooleanSetting(
+	public static final boolean USE_TYPES = SettingsLoader.getBooleanSetting(
 			"useTypes", true);
 
 	/**

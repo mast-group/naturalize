@@ -54,7 +54,7 @@ public class DynamicRangeEval {
 
 		final T after;
 
-		BeforeAfterScore(T b, T a) {
+		BeforeAfterScore(final T b, final T a) {
 			before = b;
 			after = a;
 		}
@@ -66,12 +66,12 @@ public class DynamicRangeEval {
 
 	}
 
-	public static boolean DEBUG_OUTPUT = false;
+	public static final boolean DEBUG_OUTPUT = false;
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final DynamicRangeEval dre = new DynamicRangeEval(new File(args[0]),
 				new JavaTokenizer(), ScopesTUI.getScopeExtractorByName(args[1]));
 		dre.calculateEverythin();
@@ -79,12 +79,13 @@ public class DynamicRangeEval {
 
 	}
 
-	private List<BeforeAfterScore<Double>> crossEntropyCmp = Lists
+	private final List<BeforeAfterScore<Double>> crossEntropyCmp = Lists
 			.newArrayList();
 
-	private List<BeforeAfterScore<Double>> scoreBest = Lists.newArrayList();
+	private final List<BeforeAfterScore<Double>> scoreBest = Lists
+			.newArrayList();
 
-	private List<BeforeAfterScore<Double>> score = Lists.newArrayList();
+	private final List<BeforeAfterScore<Double>> score = Lists.newArrayList();
 
 	private static final int nMethodsToCheck = 500;
 
@@ -131,7 +132,7 @@ public class DynamicRangeEval {
 				if (methodsChecked > nMethodsToCheck) {
 					break;
 				}
-			} catch (Throwable e) {
+			} catch (final Throwable e) {
 				e.printStackTrace();
 			}
 		}
@@ -255,7 +256,7 @@ public class DynamicRangeEval {
 		final SnippetSuggestions ssBefore = SnippetScorer.scoreSnippet(method,
 				renamer, scopeExtractor, false, false);
 
-		Map<String, String> renamingPlan = Maps.newTreeMap();
+		final Map<String, String> renamingPlan = Maps.newTreeMap();
 		final String targetName = getRandomName(allToks, renamer.getLM()
 				.getTokenizer());
 		renamingPlan.put(renamedVars.get(0), targetName);
