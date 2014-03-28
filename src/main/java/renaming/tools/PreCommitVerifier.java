@@ -155,17 +155,24 @@ public class PreCommitVerifier {
 		boolean noSuggestions = true;
 		for (final File f : testFiles) {
 			final String snippetCode = FileUtils.readFileToString(f);
-			final SnippetSuggestions suggestions = scorer.scoreSnippet(
-					ex.getASTNode(snippetCode), false);
-			if (!suggestions.suggestions.isEmpty()) {
-				noSuggestions = false;
-				System.out
-						.println("=========================================================");
-				System.out.println("Suggestions for" + f.getAbsolutePath());
-				System.out
-						.println("=========================================================");
-				CodeReviewAssistant.printRenaming(suggestions, snippetCode, -1);
+			SnippetSuggestions suggestions;
+			try {
+				suggestions = scorer.scoreSnippet(
+						ex.getBestEffortAstNode(snippetCode), false);
+				if (!suggestions.suggestions.isEmpty()) {
+					noSuggestions = false;
+					System.out
+							.println("=========================================================");
+					System.out.println("Suggestions for" + f.getAbsolutePath());
+					System.out
+							.println("=========================================================");
+					CodeReviewAssistant.printRenaming(suggestions, snippetCode,
+							-1);
+				}
+			} catch (final Exception e) {
+				e.printStackTrace();
 			}
+
 		}
 
 		if (noSuggestions) {

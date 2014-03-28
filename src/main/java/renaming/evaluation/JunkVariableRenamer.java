@@ -4,7 +4,6 @@
 package renaming.evaluation;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
@@ -40,7 +39,7 @@ public class JunkVariableRenamer {
 	public static final double ZIPFS_SLOPE = SettingsLoader.getNumericSetting(
 			"zipfsSlope", 1.08);
 
-	public static void main(final String[] args) throws IOException {
+	public static void main(final String[] args) throws Exception {
 		if (args.length < 2) {
 			System.err.println("Usage <file> <%selection>");
 		}
@@ -93,12 +92,12 @@ public class JunkVariableRenamer {
 	 * @param percentToRename
 	 * @param inputFile
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 * @deprecated this is not fair for small files.
 	 */
 	@Deprecated
 	public String renameAllVarsInFile(final double percentToRename,
-			final File inputFile) throws IOException {
+			final File inputFile) throws Exception {
 
 		String file = FileUtils.readFileToString(inputFile);
 		final Multimap<ASTNode, Variable> vars = VariableScopeExtractor
@@ -110,7 +109,7 @@ public class JunkVariableRenamer {
 		}
 
 		final JavaASTExtractor ex = new JavaASTExtractor(false);
-		return ex.getAST(file).toString();
+		return ex.getBestEffortAstNode(file).toString();
 	}
 
 	/**
@@ -118,10 +117,10 @@ public class JunkVariableRenamer {
 	 * 
 	 * @param file
 	 * @return
-	 * @throws IOException
+	 * @throws Exception
 	 */
 	public String renameSingleVariablesToJunk(final String file)
-			throws IOException {
+			throws Exception {
 		final Multimap<ASTNode, Variable> vars = VariableScopeExtractor
 				.getVariableScopes(file, ParseType.COMPILATION_UNIT);
 		final List<Entry<ASTNode, Variable>> selected = Lists.newArrayList();
@@ -156,6 +155,6 @@ public class JunkVariableRenamer {
 
 		// Format code naively
 		final JavaASTExtractor ex = new JavaASTExtractor(false);
-		return ex.getAST(renamed).toString();
+		return ex.getBestEffortAstNode(renamed).toString();
 	}
 }

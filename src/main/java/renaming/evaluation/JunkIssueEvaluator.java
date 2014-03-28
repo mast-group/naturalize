@@ -188,7 +188,7 @@ public class JunkIssueEvaluator {
 				FileUtils.writeStringToFile(currentFile, jvr
 						.renameSingleVariablesToJunk(FileUtils
 								.readFileToString(currentFile)));
-			} catch (final IOException e) {
+			} catch (final Exception e) {
 				LOGGER.warning(ExceptionUtils.getFullStackTrace(e));
 			}
 		}
