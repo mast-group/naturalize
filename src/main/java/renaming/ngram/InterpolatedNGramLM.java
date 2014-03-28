@@ -57,7 +57,7 @@ public class InterpolatedNGramLM extends StupidBackoff {
 	 * .NGram, boolean)
 	 */
 	@Override
-	protected void addNgramToDict(NGram<String> ngram, boolean addNewVoc) {
+	protected void addNgram(NGram<String> ngram, boolean addNewVoc) {
 		throw new UnsupportedOperationException(
 				"InterpolatedNGramLM cannot be trained");
 	}

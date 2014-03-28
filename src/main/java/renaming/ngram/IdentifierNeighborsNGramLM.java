@@ -71,7 +71,7 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 				final NGram<String> ngram = NGram.constructNgramAt(i, sentence,
 						getN());
 				if (ngram.size() > 1) {
-					addNgramToDict(ngram, false);
+					addNgram(ngram, false);
 				}
 			}
 
@@ -128,7 +128,7 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 			final NGram<String> ngram = NGram.constructNgramAt(i, sentence,
 					getN());
 			if (ngram.size() > 1) {
-				addNgramToDict(ngram, addNewToks);
+				addNgram(ngram, addNewToks);
 			}
 		}
 
@@ -136,7 +136,7 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 		for (int i = getN() - 1; i > 0; i--) {
 			final NGram<String> ngram = NGram.constructNgramAt(
 					sentence.size() - 1, sentence, i);
-			addNgramToDict(ngram, addNewToks);
+			addNgram(ngram, addNewToks);
 		}
 	}
 
@@ -147,8 +147,7 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 	 * @param ngram
 	 */
 	@Override
-	protected void addNgramToDict(final NGram<String> ngram,
-			final boolean addNewVoc) {
+	protected void addNgram(final NGram<String> ngram, final boolean addNewVoc) {
 
 		trie.add(ngram, addNewVoc);
 	}
@@ -184,6 +183,11 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 	@Override
 	public double getProbabilityFor(final NGram<String> ngram) {
 		return getMLProbabilityFor(ngram, false);
+	}
+
+	@Override
+	protected void removeNgram(final NGram<String> ngram) {
+		trie.remove(ngram);
 	}
 
 	@Override
