@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import renaming.priors.VariableTypePrior;
+import renaming.priors.JavaVariableNameTypeDistribution;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 
@@ -21,7 +21,7 @@ import com.google.common.math.DoubleMath;
  */
 public class LocalTypedIdentifierRenamings extends BaseIdentifierRenamings {
 
-	VariableTypePrior tp;
+	JavaVariableNameTypeDistribution tp;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(LocalTypedIdentifierRenamings.class.getName());
@@ -35,7 +35,7 @@ public class LocalTypedIdentifierRenamings extends BaseIdentifierRenamings {
 
 	@Override
 	public double addScopePriors(final String identifierName, final Scope scope) {
-		final double prob = tp.getMLProbability(identifierName, scope);
+		final double prob = tp.getMLProbability(identifierName, scope.type);
 		if (prob > 0) {
 			return -DoubleMath.log2(prob);
 		} else if (!this.isTrueUNK(identifierName)) {
@@ -47,7 +47,7 @@ public class LocalTypedIdentifierRenamings extends BaseIdentifierRenamings {
 
 	@Override
 	public void buildPriors(final Collection<File> trainingFiles) {
-		tp = VariableTypePrior.buildFromFiles(trainingFiles);
+		tp = JavaVariableNameTypeDistribution.buildFromFiles(trainingFiles);
 	}
 
 }

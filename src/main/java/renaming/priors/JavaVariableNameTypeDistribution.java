@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import codemining.java.codeutils.JavaASTExtractor;
 import codemining.java.codeutils.JavaApproximateTypeInferencer;
-import codemining.languagetools.Scope;
 import codemining.math.probability.DiscreteElementwiseConditionalDistribution;
 import codemining.math.probability.IConditionalProbability;
 import codemining.util.serialization.ISerializationStrategy.SerializationException;
@@ -27,17 +26,20 @@ import codemining.util.serialization.Serializer;
 import com.google.common.base.Optional;
 
 /**
+ * A distribution of variable names given types.
+ * 
  * @author Miltos Allamanis <m.allamanis@ed.ac.uk>
  * 
  */
-public class VariableTypePrior implements
-		IConditionalProbability<String, Scope> {
+public class JavaVariableNameTypeDistribution implements
+		IConditionalProbability<String, String> {
 
 	private static final Logger LOGGER = Logger
-			.getLogger(VariableTypePrior.class.getName());
+			.getLogger(JavaVariableNameTypeDistribution.class.getName());
 
-	public static VariableTypePrior buildFromFiles(final Collection<File> files) {
-		final VariableTypePrior tp = new VariableTypePrior();
+	public static JavaVariableNameTypeDistribution buildFromFiles(
+			final Collection<File> files) {
+		final JavaVariableNameTypeDistribution tp = new JavaVariableNameTypeDistribution();
 		for (final File f : files) {
 			try {
 				final JavaASTExtractor ex = new JavaASTExtractor(false);
@@ -64,11 +66,12 @@ public class VariableTypePrior implements
 			return;
 		}
 
-		final Collection<File> trainingFiles = FileUtils.listFiles(new File(args[0]),
-				new RegexFileFilter(".*\\.java$"),
+		final Collection<File> trainingFiles = FileUtils.listFiles(new File(
+				args[0]), new RegexFileFilter(".*\\.java$"),
 				DirectoryFileFilter.DIRECTORY);
 
-		final VariableTypePrior tp = VariableTypePrior.buildFromFiles(trainingFiles);
+		final JavaVariableNameTypeDistribution tp = JavaVariableNameTypeDistribution
+				.buildFromFiles(trainingFiles);
 		Serializer.getSerializer().serialize(tp, args[1]);
 	}
 
@@ -77,20 +80,20 @@ public class VariableTypePrior implements
 	/**
 	 * 
 	 */
-	private VariableTypePrior() {
+	private JavaVariableNameTypeDistribution() {
 	}
 
 	@Override
-	public double getMLProbability(final String element, final Scope given) {
-		if (given == null) {
+	public Optional<String> getMaximumLikelihoodElement(final String type) {
+		return typePrior.getMaximumLikelihoodElement(type);
+	}
+
+	@Override
+	public double getMLProbability(final String element, final String type) {
+		if (type == null) {
 			return 1;
 		}
-		return typePrior.getMLProbability(element, given.type);
-	}
-
-	@Override
-	public Optional<String> getMaximumLikelihoodElement(final Scope given) {
-		return typePrior.getMaximumLikelihoodElement(given.type);
+		return typePrior.getMLProbability(element, type);
 	}
 
 }

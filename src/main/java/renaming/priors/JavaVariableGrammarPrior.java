@@ -16,28 +16,29 @@ import codemining.java.codeutils.scopes.VariableScopeExtractor;
 import codemining.languagetools.Scope;
 import codemining.math.probability.DiscreteElementwiseConditionalDistribution;
 import codemining.math.probability.IConditionalProbability;
+import codemining.util.data.Pair;
 
 import com.google.common.base.Optional;
 
 /**
  * A prior of the names based on the grammar position. Father and grandfather
- * node are not considered independent.
+ * node are considered independent.
  * 
  * @author Miltos Allamanis <m.allamanis@ed.ac.uk>
  * 
  */
-public class VariableGrammarPrior implements
-		IConditionalProbability<String, Scope> {
+public class JavaVariableGrammarPrior implements
+		IConditionalProbability<String, Pair<Integer, Integer>> {
 
 	final DiscreteElementwiseConditionalDistribution<String, Integer> parentPrior = new DiscreteElementwiseConditionalDistribution<String, Integer>();
 	final DiscreteElementwiseConditionalDistribution<String, Integer> grandParentPrior = new DiscreteElementwiseConditionalDistribution<String, Integer>();
 
 	private static final Logger LOGGER = Logger
-			.getLogger(VariableTypePrior.class.getName());
+			.getLogger(JavaVariableNameTypeDistribution.class.getName());
 
-	public static VariableGrammarPrior buildFromFiles(
+	public static JavaVariableGrammarPrior buildFromFiles(
 			final Collection<File> files) {
-		final VariableGrammarPrior gp = new VariableGrammarPrior();
+		final JavaVariableGrammarPrior gp = new JavaVariableGrammarPrior();
 		for (final File f : files) {
 			try {
 				for (final Entry<Scope, String> variable : VariableScopeExtractor
@@ -55,19 +56,20 @@ public class VariableGrammarPrior implements
 		return gp;
 	}
 
-	private VariableGrammarPrior() {
+	private JavaVariableGrammarPrior() {
 	}
 
 	@Override
-	public double getMLProbability(final String element, final Scope given) {
-		return parentPrior.getMLProbability(element, given.astNodeType)
-				* grandParentPrior.getMLProbability(element,
-						given.astParentNodeType);
-	}
-
-	@Override
-	public Optional<String> getMaximumLikelihoodElement(final Scope given) {
+	public Optional<String> getMaximumLikelihoodElement(
+			final Pair<Integer, Integer> given) {
 		throw new NotImplementedException();
+	}
+
+	@Override
+	public double getMLProbability(final String element,
+			final Pair<Integer, Integer> given) {
+		return parentPrior.getMLProbability(element, given.first)
+				* grandParentPrior.getMLProbability(element, given.second);
 	}
 
 }
