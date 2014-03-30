@@ -8,7 +8,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import codemining.languagetools.ITokenizer;
@@ -81,10 +80,8 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 		public void run() {
 			LOGGER.finer("Reading file " + codeFile.getAbsolutePath());
 			try {
-				final char[] code = FileUtils.readFileToString(codeFile)
-						.toCharArray();
 				final List<FullToken> tokens = tokenizer
-						.getTokenListFromCode(code);
+						.getTokenListFromCode(codeFile);
 
 				addRelevantNGrams(tokens);
 			} catch (final IOException e) {

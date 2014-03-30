@@ -217,6 +217,7 @@ public abstract class AbstractIdentifierRenamings implements
 	 */
 	private Multiset<NGram<String>> getSnippetNGrams(
 			final TokenNameBinding binding) {
+		// TODO: Need much more efficient method.
 		final TokenNameBinding renamed = binding.renameTo(WILDCARD_TOKEN);
 		return getNgramsAtPosition(Sets.newTreeSet(renamed.nameIndexes),
 				renamed.sourceCodeTokens);
