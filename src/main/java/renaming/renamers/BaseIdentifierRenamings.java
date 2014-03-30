@@ -61,10 +61,6 @@ public class BaseIdentifierRenamings extends AbstractIdentifierRenamings {
 		}
 	}
 
-	public void buildPriors(final Collection<File> trainingFiles) {
-		// no priors
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -86,8 +82,6 @@ public class BaseIdentifierRenamings extends AbstractIdentifierRenamings {
 					.getDeclaredConstructor(AbstractNGramLM.class).newInstance(
 							dict);
 			this.ngramLM = ng;
-
-			buildPriors(trainingFiles);
 
 		} catch (final IOException e) {
 			LOGGER.warning(ExceptionUtils.getFullStackTrace(e));

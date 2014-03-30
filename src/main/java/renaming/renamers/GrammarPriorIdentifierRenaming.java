@@ -49,7 +49,8 @@ public class GrammarPriorIdentifierRenaming extends BaseIdentifierRenamings {
 	}
 
 	@Override
-	public void buildPriors(final Collection<File> trainingFiles) {
+	public void buildRenamingModel(final Collection<File> trainingFiles) {
+		super.buildRenamingModel(trainingFiles);
 		gp = JavaVariableGrammarPrior.buildFromFiles(trainingFiles);
 	}
 

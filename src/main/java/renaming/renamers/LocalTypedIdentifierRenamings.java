@@ -46,7 +46,8 @@ public class LocalTypedIdentifierRenamings extends BaseIdentifierRenamings {
 	}
 
 	@Override
-	public void buildPriors(final Collection<File> trainingFiles) {
+	public void buildRenamingModel(final Collection<File> trainingFiles) {
+		super.buildRenamingModel(trainingFiles);
 		tp = JavaVariableNameTypeDistribution.buildFromFiles(trainingFiles);
 	}
 

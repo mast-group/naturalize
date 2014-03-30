@@ -80,7 +80,8 @@ public class AllPriorIdentifierRenaming extends BaseIdentifierRenamings {
 	}
 
 	@Override
-	public void buildPriors(final Collection<File> trainingFiles) {
+	public void buildRenamingModel(final Collection<File> trainingFiles) {
+		super.buildRenamingModel(trainingFiles);
 		if (USE_TYPES) {
 			tp = JavaVariableNameTypeDistribution.buildFromFiles(trainingFiles);
 		}
