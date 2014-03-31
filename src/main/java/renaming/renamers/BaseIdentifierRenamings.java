@@ -38,6 +38,11 @@ public class BaseIdentifierRenamings extends AbstractIdentifierRenamings {
 	private static final Logger LOGGER = Logger
 			.getLogger(BaseIdentifierRenamings.class.getName());
 
+	public BaseIdentifierRenamings() {
+		tokenizer = null;
+		smoothedNgramClass = null;
+	}
+
 	public BaseIdentifierRenamings(final AbstractNGramLM model) {
 		this.ngramLM = model;
 		tokenizer = model.getTokenizer();
