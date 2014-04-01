@@ -19,7 +19,7 @@ import org.apache.commons.lang.math.RandomUtils;
 
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
 import renaming.segmentranking.SnippetScorer;
-import codemining.java.codeutils.JavaTokenizer;
+import codemining.java.tokenizers.JavaTokenizer;
 import codemining.util.parallel.ParallelThreadPool;
 
 import com.google.common.collect.Lists;

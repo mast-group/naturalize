@@ -13,9 +13,9 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
-import codemining.java.codeutils.JavaTokenizer;
 import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopesTUI;
+import codemining.java.tokenizers.JavaTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 

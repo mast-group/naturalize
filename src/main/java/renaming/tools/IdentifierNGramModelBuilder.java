@@ -19,7 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 import renaming.ngram.IdentifierNeighborsNGramLM;
-import codemining.java.codeutils.JavaTokenizer;
+import codemining.java.tokenizers.JavaTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.lm.ngram.AbstractNGramLM;
 import codemining.lm.ngram.smoothing.StupidBackoff;

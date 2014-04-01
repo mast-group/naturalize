@@ -15,7 +15,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.renamers.BaseIdentifierRenamings;
-import codemining.java.codeutils.JavaTokenizer;
+import codemining.java.tokenizers.JavaTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 import codemining.util.serialization.ISerializationStrategy.SerializationException;

@@ -24,9 +24,9 @@ import renaming.segmentranking.SnippetScorer;
 import renaming.segmentranking.SnippetScorer.SnippetSuggestions;
 import renaming.tools.CodeReviewAssistant;
 import codemining.java.codedata.MethodRetriever;
-import codemining.java.codeutils.JavaTokenizer;
 import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopesTUI;
+import codemining.java.tokenizers.JavaTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.util.SettingsLoader;
 

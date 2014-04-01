@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import renaming.renamers.INGramIdentifierRenamer;
-import codemining.java.codeutils.JavaFormattingTokenizer;
-import codemining.java.codeutils.JavaWidthAnnotatedWhitespaceTokenizer;
+import codemining.java.tokenizers.JavaFormattingTokenizer;
+import codemining.java.tokenizers.JavaWidthAnnotatedWhitespaceTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 import codemining.lm.ngram.AbstractNGramLM;

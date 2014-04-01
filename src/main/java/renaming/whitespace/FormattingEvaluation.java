@@ -15,7 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
-import codemining.java.codeutils.JavaWhitespaceTokenizer;
+import codemining.java.tokenizers.JavaWhitespaceTokenizer;
 import codemining.util.parallel.ParallelThreadPool;
 
 /**

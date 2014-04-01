@@ -25,9 +25,9 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
-import codemining.java.codeutils.JavaTokenizer;
 import codemining.java.codeutils.scopes.VariableScopeExtractor;
 import codemining.java.codeutils.scopes.VariableScopeExtractor.Variable;
+import codemining.java.tokenizers.JavaTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 import codemining.util.SettingsLoader;
