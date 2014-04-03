@@ -16,8 +16,8 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import renaming.evaluation.NamingEvaluator.ResultObject;
 import renaming.renamers.AbstractIdentifierRenamings;
-import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopesTUI;
+import codemining.languagetools.IScopeExtractor;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope.ScopeType;
 import codemining.lm.ngram.AbstractNGramLM;

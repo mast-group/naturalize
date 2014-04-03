@@ -14,9 +14,9 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
 import renaming.segmentranking.SegmentRenamingSuggestion.Suggestion;
-import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.MethodScopeExtractor;
 import codemining.java.codeutils.scopes.TypenameScopeExtractor;
+import codemining.languagetools.IScopeExtractor;
 import codemining.util.SettingsLoader;
 
 import com.google.common.base.Objects;

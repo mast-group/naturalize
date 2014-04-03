@@ -19,9 +19,9 @@ import renaming.renamers.BaseIdentifierRenamings;
 import renaming.segmentranking.SnippetScorer;
 import renaming.segmentranking.SnippetScorer.SnippetSuggestions;
 import codemining.java.codeutils.JavaASTExtractor;
-import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.VariableScopeExtractor;
 import codemining.java.tokenizers.JavaTokenizer;
+import codemining.languagetools.IScopeExtractor;
 import codemining.languagetools.ITokenizer;
 import codemining.util.parallel.ParallelThreadPool;
 

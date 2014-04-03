@@ -19,10 +19,10 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.segmentranking.SegmentRenamingSuggestion.Suggestion;
-import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.java.tokenizers.JavaTokenizer;
+import codemining.languagetools.IScopeExtractor;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.ParseType;
 import codemining.languagetools.Scope;

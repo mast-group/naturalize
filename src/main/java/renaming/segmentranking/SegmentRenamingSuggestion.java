@@ -22,10 +22,10 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.renamers.BaseIdentifierRenamings;
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
-import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopesTUI;
 import codemining.java.codeutils.scopes.VariableScopeExtractor;
 import codemining.java.tokenizers.JavaTokenizer;
+import codemining.languagetools.IScopeExtractor;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 

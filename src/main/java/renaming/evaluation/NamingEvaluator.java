@@ -21,8 +21,8 @@ import org.apache.commons.lang.math.RandomUtils;
 
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
-import codemining.java.codeutils.scopes.IScopeExtractor;
 import codemining.java.codeutils.scopes.ScopesTUI;
+import codemining.languagetools.IScopeExtractor;
 import codemining.languagetools.Scope;
 import codemining.languagetools.Scope.ScopeType;
 import codemining.lm.ngram.AbstractNGramLM;
