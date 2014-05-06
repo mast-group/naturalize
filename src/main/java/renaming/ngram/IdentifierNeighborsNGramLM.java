@@ -183,7 +183,7 @@ public class IdentifierNeighborsNGramLM extends AbstractNGramLM {
 	}
 
 	@Override
-	protected void removeNgram(final NGram<String> ngram) {
+	public void removeNgram(final NGram<String> ngram) {
 		trie.remove(ngram);
 	}
 
