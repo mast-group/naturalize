@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import renaming.renamers.INGramIdentifierRenamer;
-import codemining.java.tokenizers.JavaFormattingTokenizer;
 import codemining.java.tokenizers.JavaWidthAnnotatedWhitespaceTokenizer;
+import codemining.languagetools.FormattingTokenizer;
 import codemining.languagetools.ITokenizer;
 import codemining.languagetools.Scope;
 import codemining.lm.ngram.AbstractNGramLM;
@@ -43,7 +43,7 @@ public class FormattingRenamings implements INGramIdentifierRenamer {
 	/**
 	 * The formatting (whitespace) tokenizer.
 	 */
-	final ITokenizer tokenizer = new JavaFormattingTokenizer(
+	final ITokenizer tokenizer = new FormattingTokenizer(
 			new JavaWidthAnnotatedWhitespaceTokenizer());
 
 	private AbstractNGramLM ngramLM;
