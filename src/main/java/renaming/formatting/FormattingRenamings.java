@@ -1,4 +1,4 @@
-package renaming.whitespace;
+package renaming.formatting;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,7 +16,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import renaming.renamers.INGramIdentifierRenamer;
 import codemining.java.tokenizers.JavaWidthAnnotatedWhitespaceTokenizer;
 import codemining.languagetools.FormattingTokenizer;
-import codemining.languagetools.ITokenizer;
+import codemining.languagetools.IFormattingTokenizer;
 import codemining.languagetools.Scope;
 import codemining.lm.ngram.AbstractNGramLM;
 import codemining.lm.ngram.NGram;
@@ -30,7 +30,8 @@ import com.google.common.collect.Sets;
 import com.google.common.math.DoubleMath;
 
 /**
- * Treat formatting issues as renaming-like problem.
+ * Treat formatting issues as renaming-like problem. For compatibility reasons
+ * this class creates a java renamer by default.
  * 
  * @author Miltos Allamanis <m.allamanis@ed.ac.uk>
  * 
@@ -43,18 +44,29 @@ public class FormattingRenamings implements INGramIdentifierRenamer {
 	/**
 	 * The formatting (whitespace) tokenizer.
 	 */
-	final ITokenizer tokenizer = new FormattingTokenizer(
-			new JavaWidthAnnotatedWhitespaceTokenizer());
+	final IFormattingTokenizer tokenizer;
 
 	private AbstractNGramLM ngramLM;
 
-	final Class<? extends AbstractNGramLM> smoothedNgramClass;
+	private final Class<? extends AbstractNGramLM> smoothedNgramClass;
 
 	public static final int NGRAM_SIZE = (int) SettingsLoader
 			.getNumericSetting("ngramSize", 5);
 
 	public FormattingRenamings() {
-		super();
+		this(new FormattingTokenizer(
+				new JavaWidthAnnotatedWhitespaceTokenizer()));
+	}
+
+	public FormattingRenamings(final AbstractNGramLM languageModel,
+			final IFormattingTokenizer tokenizer) {
+		ngramLM = languageModel;
+		smoothedNgramClass = null;
+		this.tokenizer = tokenizer;
+	}
+
+	public FormattingRenamings(final IFormattingTokenizer tokenizer) {
+		this.tokenizer = tokenizer;
 		try {
 			smoothedNgramClass = (Class<? extends AbstractNGramLM>) Class
 					.forName(SettingsLoader.getStringSetting(
@@ -64,12 +76,6 @@ public class FormattingRenamings implements INGramIdentifierRenamer {
 			LOGGER.severe(ExceptionUtils.getFullStackTrace(e));
 			throw new IllegalArgumentException(e);
 		}
-	}
-
-	public FormattingRenamings(final AbstractNGramLM languageModel) {
-		super();
-		ngramLM = languageModel;
-		smoothedNgramClass = null;
 	}
 
 	public void buildModel(final Collection<File> trainingFiles) {

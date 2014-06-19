@@ -1,7 +1,7 @@
 /**
  * 
  */
-package renaming.whitespace;
+package renaming.formatting;
 
 import java.io.File;
 import java.io.IOException;

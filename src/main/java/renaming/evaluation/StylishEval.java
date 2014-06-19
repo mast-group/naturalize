@@ -23,12 +23,12 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import renaming.formatting.FormattingRenamings;
 import renaming.renamers.AbstractIdentifierRenamings;
 import renaming.renamers.BaseIdentifierRenamings;
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
 import renaming.segmentranking.SnippetScorer;
 import renaming.segmentranking.SnippetScorer.SnippetSuggestions;
-import renaming.whitespace.FormattingRenamings;
 import codemining.java.codedata.MethodRetriever;
 import codemining.java.codeutils.JavaASTExtractor;
 import codemining.java.codeutils.scopes.ScopedIdentifierRenaming;

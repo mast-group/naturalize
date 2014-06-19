@@ -3,4 +3,4 @@
  * @author Miltos Allamanis <m.allamanis@ed.ac.uk>
  *
  */
-package renaming.whitespace;
+package renaming.formatting;
