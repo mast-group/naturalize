@@ -17,6 +17,7 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
 import renaming.formatting.FormattingRenamings;
 import renaming.renamers.INGramIdentifierRenamer.Renaming;
+import codemining.cpp.codeutils.CASTAnnotatedTokenizer;
 import codemining.cpp.codeutils.CppWhitespaceTokenizer;
 import codemining.java.tokenizers.JavaWhitespaceTokenizer;
 import codemining.languagetools.FormattingTokenizer;
@@ -38,7 +39,7 @@ import com.google.common.collect.Sets;
 public class FormattingReviewAssistant {
 
 	public static final double CONFIDENCE_THRESHOLD = SettingsLoader
-			.getNumericSetting("confidenceThreshold", 5);
+			.getNumericSetting("confidenceThreshold", 10);
 
 	private static double getScoreOf(final SortedSet<Renaming> suggestions,
 			final String actual) {
@@ -65,7 +66,8 @@ public class FormattingReviewAssistant {
 		final String language = args[2];
 		final FormattingTokenizer tokenizer;
 		if (language.equals("cpp")) {
-			tokenizer = new FormattingTokenizer(new CppWhitespaceTokenizer());
+			tokenizer = new FormattingTokenizer(new CASTAnnotatedTokenizer(
+					new CppWhitespaceTokenizer()));
 		} else if (language.equals("java")) {
 			tokenizer = new FormattingTokenizer(new JavaWhitespaceTokenizer());
 		} else {
@@ -160,7 +162,7 @@ public class FormattingReviewAssistant {
 		int i = 1;
 		for (final Entry<Integer, SortedSet<Renaming>> renaming : positionedRenamings
 				.entrySet()) {
-			System.out.println(i + ":" + renaming.getValue());
+			System.out.println(i + ":" + renaming.getValue().first());
 			i++;
 		}
 	}
