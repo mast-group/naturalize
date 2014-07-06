@@ -14,10 +14,10 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import renaming.ngram.IdentifierNeighborsNGramLM;
-import renaming.ngram.InterpolatedNGramLM;
 import codemining.languagetools.ITokenizer;
 import codemining.lm.ngram.AbstractNGramLM;
 import codemining.lm.ngram.NGram;
+import codemining.lm.ngram.smoothing.InterpolatedNGramLM;
 import codemining.util.SettingsLoader;
 import codemining.util.serialization.ISerializationStrategy.SerializationException;
 import codemining.util.serialization.Serializer;
