@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import codemining.languagetools.Scope;
-import codemining.languagetools.TokenNameBinding;
+import codemining.languagetools.bindings.TokenNameBinding;
 import codemining.lm.ngram.AbstractNGramLM;
 import codemining.lm.ngram.NGram;
 
