@@ -40,6 +40,11 @@
     </dependency>
     <dependency>
       <groupId>codemining</groupId>
+      <artifactId>commitmining-tools</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>codemining</groupId>
       <artifactId>codemining-core</artifactId>
       <version>${project.version}</version>
     </dependency>
