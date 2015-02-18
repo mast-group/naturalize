@@ -3,6 +3,8 @@
  */
 package renaming.history;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 
 /**
@@ -22,20 +24,30 @@ public class IdentifierInformation {
 	 */
 	public IdentifierInformation(final String sha, final String filePath,
 			final String name, final String type, final int declarationLine) {
-		this.SHA = sha;
-		this.filePath = filePath;
-		this.name = name;
-		this.type = type;
+		this.SHA = checkNotNull(sha);
+		this.filePath = checkNotNull(filePath);
+		this.name = checkNotNull(name);
+		this.type = checkNotNull(type);
 		this.declarationLineNumber = declarationLine;
 	}
 
-	public boolean areProbablySame(final IdentifierInformation other) {
+	/**
+	 * Check if an identifier is of the same type and name.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public boolean areProbablyIdentical(final IdentifierInformation other) {
 		return name.equals(other.name) && type.equals(other.type);
+	}
+
+	public boolean areTypeEqual(final IdentifierInformation other) {
+		return type.equals(other.type);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -60,7 +72,7 @@ public class IdentifierInformation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -71,7 +83,7 @@ public class IdentifierInformation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

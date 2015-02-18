@@ -12,18 +12,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.diff.EditList;
 import org.eclipse.jgit.errors.LargeObjectException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 import codemining.java.tokenizers.JavaTokenizer;
+import codemining.util.data.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
 import committools.data.AbstractCommitWalker;
 import committools.data.EditListRetriever;
 import committools.data.EditListRetriever.IEditListCallback;
@@ -59,6 +65,10 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 			return identifierThroughTime.get(identifierThroughTime.size() - 1);
 		}
 
+		public boolean isDeleted() {
+			return identifierDeleted;
+		}
+
 		public void setIdentifierDeleted() {
 			checkArgument(!identifierDeleted);
 			identifierDeleted = true;
@@ -78,6 +88,26 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 		final ChangingIdentifiersRepositoryWalker cirw = new ChangingIdentifiersRepositoryWalker(
 				args[0], AbstractCommitWalker.BASE_WALK);
 		cirw.doWalk(20);
+		printVersions(cirw);
+	}
+
+	/**
+	 * @param cirw
+	 */
+	private static void printVersions(
+			final ChangingIdentifiersRepositoryWalker cirw) {
+		for (final IdentifierInformationThroughTime idChain : cirw.allIdentifierChains) {
+			if (idChain.identifierThroughTime.size() > 0) {
+				System.out.println("Identifier for "
+						+ idChain.identifierThroughTime.get(0).name);
+
+				for (final IdentifierInformation identifier : idChain.identifierThroughTime) {
+					System.out.println(identifier);
+				}
+				System.out
+						.println("***************************************************");
+			}
+		}
 	}
 
 	private final List<IdentifierInformationThroughTime> allIdentifierChains = Lists
@@ -106,6 +136,202 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 				JavaTokenizer.javaCodeFileFilter);
 	}
 
+	private void doFirstScan(final File repositoryDir, final String sha) {
+		for (final File f : FileUtils
+				.listFiles(repositoryDir, JavaTokenizer.javaCodeFileFilter,
+						DirectoryFileFilter.DIRECTORY)) {
+			final String fileInRepo = f.getAbsolutePath().substring(
+					(int) (repositoryDir.getAbsolutePath().length() + 1));
+			Set<IdentifierInformation> identiferInfos;
+			try {
+				identiferInfos = infoScanner.scanFile(f, sha);
+				identiferInfos
+						.forEach(info -> {
+							final IdentifierInformationThroughTime iitt = new IdentifierInformationThroughTime();
+							iitt.addInformation(info);
+							currentStateOfIdentifiers.put(fileInRepo, iitt);
+						});
+			} catch (final IOException e) {
+				LOGGER.severe("Could not find file " + f + "\n"
+						+ ExceptionUtils.getFullStackTrace(e));
+			}
+
+		}
+	}
+
+	/**
+	 * Return a range of the possible line positions of the old line number in
+	 * the new file.
+	 *
+	 * @param declarationLineNumber
+	 * @param editList
+	 * @return
+	 */
+	private Range<Integer> getNewLineGivenOld(final int oldLineNumber,
+			final EditList editList) {
+		int offsetAbove = 0;
+		for (final Edit edit : editList) {
+			if (edit.getBeginA() < oldLineNumber
+					&& edit.getEndA() < oldLineNumber) {
+				offsetAbove += -(edit.getEndA() - edit.getBeginA())
+						+ (edit.getEndB() - edit.getBeginB());
+			} else if (edit.getBeginA() <= oldLineNumber
+					&& edit.getEndA() >= oldLineNumber) {
+				// if it was in the old range, it is now in the new range
+				checkArgument(
+						edit.getBeginA() + offsetAbove == edit.getBeginB(),
+						"Beggining was %s but expected %s", edit.getBeginB(),
+						edit.getBeginA() + offsetAbove);
+				return Range.closed(edit.getBeginB(), edit.getEndB());
+			} else {
+				return Range.closed(oldLineNumber + offsetAbove, oldLineNumber
+						+ offsetAbove);
+			}
+		}
+		return Range.closed(oldLineNumber + offsetAbove, oldLineNumber
+				+ offsetAbove);
+	}
+
+	/**
+	 * Return the equivalence classes of the variables. This is essentially, a
+	 * list of variables that could be identical.
+	 *
+	 * @param state
+	 * @param newIdentifierInfo
+	 * @return
+	 */
+	Collection<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> matchByNameAndType(
+			final Collection<IdentifierInformationThroughTime> state,
+			final Set<IdentifierInformation> newIdentifierInfo) {
+		final List<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> equivalenceClasses = Lists
+				.newArrayList();
+		for (final IdentifierInformationThroughTime iitt : state) {
+			if (!iitt.isDeleted()) {
+				equivalenceClasses.add(Pair.create(iitt, Sets.newHashSet()));
+			}
+		}
+
+		for (final IdentifierInformation newIdentifierInformation : newIdentifierInfo) {
+			// First try to match to an existing set
+			boolean atLeastOneMatchFound = false;
+			for (final Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>> idPair : equivalenceClasses) {
+				if (idPair.first == null) {
+					continue;
+				} else if (idPair.first.getLast().areProbablyIdentical(
+						newIdentifierInformation)) {
+					atLeastOneMatchFound = true;
+					idPair.second.add(newIdentifierInformation);
+				}
+			}
+			// If we fail, add
+			if (!atLeastOneMatchFound) {
+				equivalenceClasses.add(Pair.create(null,
+						Sets.newHashSet(newIdentifierInformation)));
+			}
+		}
+		return equivalenceClasses;
+	}
+
+	/**
+	 * @param state
+	 * @param editList
+	 * @param unmatchedNewIdentifiers
+	 * @param unmatchedIitts
+	 * @param possibleMatchedIds
+	 * @param iitt
+	 */
+	private void matchIittToIdentifier(
+			final Collection<IdentifierInformationThroughTime> state,
+			final EditList editList,
+			final Set<IdentifierInformation> unmatchedNewIdentifiers,
+			final Set<IdentifierInformationThroughTime> unmatchedIitts,
+			final Set<IdentifierInformation> possibleMatchedIds,
+			final IdentifierInformationThroughTime iitt) {
+		final Range<Integer> newLineNumber = getNewLineGivenOld(
+				iitt.getLast().declarationLineNumber, editList);
+		boolean matchWasFound = false;
+		for (final IdentifierInformation idInfo : possibleMatchedIds) {
+			if (newLineNumber.contains(idInfo.declarationLineNumber)
+					&& unmatchedNewIdentifiers.contains(idInfo)) {
+				iitt.addInformation(idInfo);
+				unmatchedNewIdentifiers.remove(idInfo);
+				checkArgument(unmatchedIitts.remove(iitt));
+				matchWasFound = true;
+				break;
+			}
+		}
+		if (!matchWasFound) {
+			// We failed to match, the id was deleted/renamed
+			iitt.setIdentifierDeleted();
+			checkArgument(unmatchedIitts.remove(iitt));
+		}
+	}
+
+	/**
+	 * Update the current state with the new identifiers. Alternative
+	 * implementations of this might someday be able to detect renamings.
+	 *
+	 * @param state
+	 * @param newIdentifierInfo
+	 * @param editList
+	 * @param currentFilePath
+	 */
+	private void updateIdentifierInfoState(
+			final Collection<IdentifierInformationThroughTime> state,
+			final Set<IdentifierInformation> newIdentifierInfo,
+			final EditList editList, final String currentFilePath) {
+		// Match pairs of compatible variables
+		final Collection<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> matchedPairs = matchByNameAndType(
+				state, newIdentifierInfo);
+
+		// Do matching
+		final Set<IdentifierInformation> unmatchedNewIdentifiers = Sets
+				.newIdentityHashSet();
+		unmatchedNewIdentifiers.addAll(newIdentifierInfo);
+
+		final Set<IdentifierInformationThroughTime> unmatchedIitts = Sets
+				.newIdentityHashSet();
+		unmatchedIitts.addAll(state);
+
+		for (final Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>> matchedIds : matchedPairs) {
+			// match variables with only one candidate
+			final Set<IdentifierInformation> possibleMatchedIds = matchedIds.second;
+			final IdentifierInformationThroughTime iitt = matchedIds.first;
+			checkArgument(iitt == null ? true : !iitt.isDeleted());
+			if (possibleMatchedIds.isEmpty()) {
+				// Name was deleted (or renamed). Stop chain here.
+				iitt.setIdentifierDeleted();
+				checkArgument(unmatchedIitts.remove(iitt));
+			} else if (iitt == null) {
+				// This is a new identifier
+				checkArgument(possibleMatchedIds.size() == 1);
+				final IdentifierInformationThroughTime newIitt = new IdentifierInformationThroughTime();
+				final IdentifierInformation variableToAdd = possibleMatchedIds
+						.iterator().next();
+				newIitt.addInformation(variableToAdd);
+				unmatchedNewIdentifiers.remove(variableToAdd);
+				state.add(newIitt);
+			} else {
+				checkArgument(possibleMatchedIds.size() >= 1, "Size was %s",
+						possibleMatchedIds.size());
+				matchIittToIdentifier(state, editList, unmatchedNewIdentifiers,
+						unmatchedIitts, possibleMatchedIds, iitt);
+			}
+		}
+		for (final IdentifierInformation ii : unmatchedNewIdentifiers) {
+			// We failed to match these, create new ids...
+			final IdentifierInformationThroughTime newIitt = new IdentifierInformationThroughTime();
+			newIitt.addInformation(ii);
+			state.add(newIitt);
+		}
+
+		for (final IdentifierInformationThroughTime iitt : unmatchedIitts) {
+			if (!iitt.isDeleted()) {
+				iitt.setIdentifierDeleted();
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,9 +342,13 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 	@Override
 	public void visitCommitFiles(final RevCommit commit) {
 		try {
-			editListRetriever.retrieveEditListBetweenAndCallback(commit,
-					commit.getParent(0), this);
-
+			System.out.println(commit);
+			if (commit.getParentCount() > 0) {
+				editListRetriever.retrieveEditListBetweenAndCallback(commit,
+						commit.getParent(0), this);
+			} else {
+				doFirstScan(repositoryDir, commit.getName());
+			}
 		} catch (LargeObjectException | GitAPIException | IOException e) {
 			LOGGER.warning(ExceptionUtils.getFullStackTrace(e));
 		}
@@ -131,24 +361,36 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 		final String sha = commit.name();
 		if (entry.getNewPath().equals("/dev/null")) {
 			currentStateOfIdentifiers.removeAll(entry.getOldPath()).forEach(
-					i -> i.setIdentifierDeleted());
+					i -> {
+						if (!i.isDeleted()) {
+							i.setIdentifierDeleted();
+						}
+					});
 			return;
 		}
-		final File targetFile = new File(repository.getRepository()
-				.getWorkTree() + entry.getNewPath());
+		final String repositoryFolder = repository.getRepository()
+				.getWorkTree() + "/";
+
+		final File targetFile = new File(repositoryFolder + entry.getNewPath());
 		final Set<IdentifierInformation> newIdentifierInfo = infoScanner
 				.scanFile(targetFile, commit.name());
 		if (currentStateOfIdentifiers.containsKey(entry.getOldPath())) {
 			final Collection<IdentifierInformationThroughTime> state = currentStateOfIdentifiers
 					.get(entry.getOldPath());
-			// TODO: Match info and update state. This means that any already
-			// deleted ids, will not be touched
-			// new identifiers will be added. TODO
+			final List<IdentifierInformationThroughTime> allIitts = Lists
+					.newArrayList(state);
+			final Set<IdentifierInformationThroughTime> setIitts = Sets
+					.newIdentityHashSet();
+			setIitts.addAll(state);
+			checkArgument(setIitts.size() == allIitts.size(),
+					"Before adding, state was inconsistent for ", targetFile);
+			updateIdentifierInfoState(state, newIdentifierInfo, editList,
+					entry.getNewPath());
 
 			if (!entry.getOldPath().equals(entry.getNewPath())) {
+				currentStateOfIdentifiers.putAll(entry.getNewPath(), state);
 				currentStateOfIdentifiers.removeAll(entry.getOldPath());
 			}
-			currentStateOfIdentifiers.putAll(entry.getNewPath(), state);
 		} else {
 			// This is a new file, add happily...
 			checkArgument(entry.getOldPath().equals("/dev/null"));
