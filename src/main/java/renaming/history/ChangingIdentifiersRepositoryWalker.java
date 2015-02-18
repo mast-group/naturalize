@@ -87,7 +87,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 
 		final ChangingIdentifiersRepositoryWalker cirw = new ChangingIdentifiersRepositoryWalker(
 				args[0], AbstractCommitWalker.BASE_WALK);
-		cirw.doWalk(20);
+		cirw.doWalk();
 		printVersions(cirw);
 	}
 
@@ -334,7 +334,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * committools.data.RepositoryFileWalker#visitCommitFiles(org.eclipse.jgit
 	 * .revwalk.RevCommit)
