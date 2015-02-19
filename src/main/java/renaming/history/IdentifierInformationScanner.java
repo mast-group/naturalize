@@ -18,6 +18,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import codemining.java.codeutils.JavaASTExtractor;
+import codemining.java.codeutils.MethodUtils;
 
 import com.google.common.collect.Sets;
 
@@ -32,9 +33,9 @@ public class IdentifierInformationScanner {
 	private static class DeclarationExtractor extends ASTVisitor {
 
 		final Set<IdentifierInformation> identifiers = Sets.newHashSet();
-
 		private final String SHA;
 		private final String file;
+
 		private final CompilationUnit cu;
 
 		private DeclarationExtractor(final String sha, final String file,
@@ -62,28 +63,17 @@ public class IdentifierInformationScanner {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
 		 * .MethodDeclaration)
 		 */
 		@Override
 		public boolean visit(final MethodDeclaration node) {
-			final StringBuffer typeSb = new StringBuffer();
-			if (node.getReturnType2() != null) {
-				typeSb.append(node.getReturnType2().toString()).append("(");
-			} else {
-				typeSb.append("void(");
-			}
-			for (final Object svd : node.parameters()) {
-				final SingleVariableDeclaration decl = (SingleVariableDeclaration) svd;
-				typeSb.append(decl.getType().toString());
-				typeSb.append(",");
-			}
-			typeSb.append(")");
+			final String methodType = MethodUtils.getMethodType(node);
 
 			final IdentifierInformation md = new IdentifierInformation(SHA,
-					file, node.getName().getIdentifier(), typeSb.toString(),
+					file, node.getName().getIdentifier(), methodType,
 					getLineNumber(node));
 			identifiers.add(md);
 			return super.visit(node);
@@ -91,7 +81,7 @@ public class IdentifierInformationScanner {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see
 		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
 		 * .SingleVariableDeclaration)
@@ -107,7 +97,7 @@ public class IdentifierInformationScanner {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
 		 * .VariableDeclarationExpression)
@@ -126,7 +116,7 @@ public class IdentifierInformationScanner {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
 		 * .VariableDeclarationStatement)
