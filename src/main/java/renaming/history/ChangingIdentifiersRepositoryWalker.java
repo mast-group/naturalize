@@ -381,7 +381,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * committools.data.RepositoryFileWalker#visitCommitFiles(org.eclipse.jgit
 	 * .revwalk.RevCommit)
@@ -439,8 +439,9 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 				currentStateOfIdentifiers.removeAll(entry.getOldPath());
 			}
 		} else {
-			// This is a new file, add happily...
-			checkArgument(entry.getOldPath().equals("/dev/null"));
+			// This is a new file or a file we failed to index before, add
+			// happily...
+			// checkArgument(entry.getOldPath().equals("/dev/null"));
 			final List<IdentifierInformationThroughTime> infosThroughTime = Lists
 					.newArrayList();
 			newIdentifierInfo
