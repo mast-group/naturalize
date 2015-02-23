@@ -25,6 +25,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import codemining.java.tokenizers.JavaTokenizer;
 import codemining.util.data.Pair;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -57,6 +58,10 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 
 		public final void addInformation(final IdentifierInformation idInfo) {
 			checkArgument(!identifierDeleted);
+			if (!identifierThroughTime.isEmpty()
+					&& !getLast().name.equals(idInfo.name)) {
+				System.out.println(getLast().name + "->" + idInfo.name);
+			}
 			identifierThroughTime.add(idInfo);
 		}
 
@@ -88,7 +93,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 		final ChangingIdentifiersRepositoryWalker cirw = new ChangingIdentifiersRepositoryWalker(
 				args[0], AbstractCommitWalker.BASE_WALK);
 		cirw.doWalk();
-		printVersions(cirw);
+		// printVersions(cirw);
 	}
 
 	/**
@@ -118,6 +123,8 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 
 	private static final Logger LOGGER = Logger
 			.getLogger(ChangingIdentifiersRepositoryWalker.class.getName());
+
+	private static final int MAX_LINE_RANGE_SIZE = 5;
 
 	private final EditListRetriever editListRetriever;
 
@@ -200,7 +207,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 	 * @param newIdentifierInfo
 	 * @return
 	 */
-	Collection<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> matchByNameAndType(
+	Collection<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> matchByType(
 			final Collection<IdentifierInformationThroughTime> state,
 			final Set<IdentifierInformation> newIdentifierInfo) {
 		final List<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> equivalenceClasses = Lists
@@ -217,7 +224,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 			for (final Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>> idPair : equivalenceClasses) {
 				if (idPair.first == null) {
 					continue;
-				} else if (idPair.first.getLast().areProbablyIdentical(
+				} else if (idPair.first.getLast().areTypeEqual(
 						newIdentifierInformation)) {
 					atLeastOneMatchFound = true;
 					idPair.second.add(newIdentifierInformation);
@@ -233,6 +240,8 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 	}
 
 	/**
+	 * Get the actual match
+	 *
 	 * @param state
 	 * @param editList
 	 * @param unmatchedNewIdentifiers
@@ -249,22 +258,60 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 			final IdentifierInformationThroughTime iitt) {
 		final Range<Integer> newLineNumber = getNewLineGivenOld(
 				iitt.getLast().declarationLineNumber, editList);
-		boolean matchWasFound = false;
+		final Set<IdentifierInformation> availableMatches = Sets
+				.newIdentityHashSet();
 		for (final IdentifierInformation idInfo : possibleMatchedIds) {
 			if (newLineNumber.contains(idInfo.declarationLineNumber)
-					&& unmatchedNewIdentifiers.contains(idInfo)) {
+					&& unmatchedNewIdentifiers.contains(idInfo)
+					&& !rangeTooBroad(newLineNumber)) {
+				availableMatches.add(idInfo);
+			}
+		}
+		if (!availableMatches.isEmpty()) {
+			final Set<IdentifierInformation> fullMatchindIdentifiers = Sets
+					.filter(availableMatches,
+							new Predicate<IdentifierInformation>() {
+								@Override
+								public boolean apply(
+										final IdentifierInformation t) {
+									return t.areProbablyIdentical(iitt
+											.getLast());
+								}
+							});
+			if (fullMatchindIdentifiers.size() == 1) { // try to match exact
+				final IdentifierInformation idInfo = fullMatchindIdentifiers
+						.iterator().next();
 				iitt.addInformation(idInfo);
 				unmatchedNewIdentifiers.remove(idInfo);
 				checkArgument(unmatchedIitts.remove(iitt));
-				matchWasFound = true;
-				break;
+				return;
 			}
+			// Find the one that matches best, or fail
+			if (availableMatches.size() == 1) {
+				final IdentifierInformation idInfo = availableMatches
+						.iterator().next();
+				iitt.addInformation(idInfo);
+				unmatchedNewIdentifiers.remove(idInfo);
+				checkArgument(unmatchedIitts.remove(iitt));
+				return;
+			}
+			// otherwise fail miserably
 		}
-		if (!matchWasFound) {
-			// We failed to match, the id was deleted/renamed
-			iitt.setIdentifierDeleted();
-			checkArgument(unmatchedIitts.remove(iitt));
-		}
+
+		// We failed to match, the id was deleted/renamed
+		iitt.setIdentifierDeleted();
+		checkArgument(unmatchedIitts.remove(iitt));
+
+	}
+
+	/**
+	 * Heuristically decide if this range is too broad
+	 *
+	 * @param newLineNumber
+	 * @return
+	 */
+	private boolean rangeTooBroad(final Range<Integer> newLineNumber) {
+		return newLineNumber.upperEndpoint() - newLineNumber.lowerEndpoint() > MAX_LINE_RANGE_SIZE;
 	}
 
 	/**
@@ -281,7 +328,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 			final Set<IdentifierInformation> newIdentifierInfo,
 			final EditList editList, final String currentFilePath) {
 		// Match pairs of compatible variables
-		final Collection<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> matchedPairs = matchByNameAndType(
+		final Collection<Pair<IdentifierInformationThroughTime, Set<IdentifierInformation>>> matchedPairs = matchByType(
 				state, newIdentifierInfo);
 
 		// Do matching
@@ -334,7 +381,7 @@ public class ChangingIdentifiersRepositoryWalker extends RepositoryFileWalker
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
 	 * committools.data.RepositoryFileWalker#visitCommitFiles(org.eclipse.jgit
 	 * .revwalk.RevCommit)

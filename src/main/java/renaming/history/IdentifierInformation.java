@@ -5,6 +5,8 @@ package renaming.history;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
+
 import com.google.common.base.Objects;
 
 /**
@@ -17,32 +19,37 @@ public class IdentifierInformation {
 	public final String filePath;
 	public final String name;
 	public final String type;
+	public final List<String> declaringAstParent;
 	public final int declarationLineNumber;
 
 	/**
 	 *
 	 */
 	public IdentifierInformation(final String sha, final String filePath,
-			final String name, final String type, final int declarationLine) {
+			final String name, final String type, final int declarationLine,
+			final List<String> declaringAstParents) {
 		this.SHA = checkNotNull(sha);
 		this.filePath = checkNotNull(filePath);
 		this.name = checkNotNull(name);
 		this.type = checkNotNull(type);
 		this.declarationLineNumber = declarationLine;
+		this.declaringAstParent = declaringAstParents;
 	}
 
 	/**
 	 * Check if an identifier is of the same type and name.
-	 * 
+	 *
 	 * @param other
 	 * @return
 	 */
 	public boolean areProbablyIdentical(final IdentifierInformation other) {
-		return name.equals(other.name) && type.equals(other.type);
+		return name.equals(other.name) && type.equals(other.type)
+				&& declaringAstParent.equals(other.declaringAstParent);
 	}
 
 	public boolean areTypeEqual(final IdentifierInformation other) {
-		return type.equals(other.type);
+		return type.equals(other.type)
+				&& declaringAstParent.equals(other.declaringAstParent);
 	}
 
 	/*
