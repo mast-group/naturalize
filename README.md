@@ -10,6 +10,7 @@ The project depends on three internal (maven) modules:
 a) [codemining-sequencelm](https://github.com/mast-group/codemining-sequencelm)
 b) [codemining-utils](https://github.com/mast-group/codemining-utils)
 c) [codemining-core](https://github.com/mast-group/codemining-core)
+d) [commitmining-tools](https://github.com/mast-group/commitmining-tools)
 
 the rest of the dependencies are declared in the maven dependencies. 
 
